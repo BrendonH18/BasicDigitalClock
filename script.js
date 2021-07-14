@@ -1,84 +1,76 @@
-const months = [
-"January", 
-"February", 
-"March", 
-"April", 
-"May", 
-"June", 
-"July", 
-"August", 
-"September", 
-"October", 
-"November", 
-"December"];
-
-const days = [
-  "Sunday", 
-  "Monday", 
-  "Tuesday", 
-  "Wednesday", 
-  "Thursday", 
-  "Friday", 
-  "Saturday"];
-
-var isMilitary = false;
-    
-function updateTime(timeNow, isMilitary) {
-  const time = document.getElementById("Title").getElementsByTagName("h2")[1];
-  var timeHoursInMilitary = timeNow.getHours();
+function renderTime() {
+  const timeNow = new Date();
+  const timeHours = timeNow.getHours();
   const timeMinutes = timeNow.getMinutes();
   const timeSeconds = timeNow.getSeconds();
-  
-  if (isMilitary  == false && timeHoursInMilitary > 12) {
-    timeHoursInMilitary = timeHoursInMilitary - 12;
-    timeAMPM = " PM";
-  } else if (isMilitary == false && timeHoursInMilitary <= 12) {
-    timeAMPM = " AM";
-  } else {
-    timeAMPM = "";
-  }
-        
-  time.innerHTML = `${renderLeadingZero(timeHoursInMilitary)}:${renderLeadingZero(timeMinutes)}:${renderLeadingZero(timeSeconds)}${timeAMPM}`;
+  const isAM = timeHours < 12 || timeHours === 0;
+  let amPM = isAM ? " AM" : " PM"; 
+
+  document.getElementById("time").textContent = `${renderLeadingZero(formatHour(timeHours))}:${renderLeadingZero(timeMinutes)}:${renderLeadingZero(timeSeconds)}${amPM}`;
 }
-    
-function updateDate(timeNow) {
-  const date = document.getElementById("Title").getElementsByTagName("h2")[0];
+
+function renderLeadingZero (number) {
+  return number < 10 ? "0" + number : number
+}
+
+function formatHour(hour) {
+  hour = hour >= 13 ? hour - 12 : hour;
+  hour = hour === 0 ? hour + 12 : hour;
+  return hour; 
+}
+
+function renderDate() {
+  const timeNow = new Date();
+  const date = document.getElementById("date");
   const dateMonth = months[timeNow.getMonth()];
   const dateDay = days[timeNow.getDay()];
   const dateDate = timeNow.getDate();
   const dateYear = timeNow.getFullYear();
   
-  date.innerHTML = `${dateDay} ${dateMonth} ${dateSuffix(dateDate)}, ${dateYear}`;
+  date.textContent = `${dateDay} ${dateMonth} ${dateSuffix(dateDate)}, ${dateYear}`;
   }
 
-function renderLeadingZero (x) {
-  return x < 10 ? "0" + x : x
-}
-
-function dateSuffix(x) {
-  suffix = ["st", 'nd', 'rd', 'th'];
-  lastDigit = x.toString().split('').pop();
-
-  if (x > 10 && x < 20) {
-    x = x + suffix[3];
-  } else if (lastDigit == 1) {
-    x = x + suffix[0];
-  } else if (lastDigit == 2) {
-    x = x + suffix[1];
-  } else if (lastDigit == 3) {
-    x = x + suffix[2];
-  } else { 
-    x = x + suffix[3];
+function dateSuffix(date) {
+  if (date < 10 || date > 20 ) {
+    switch (date % 10) {
+      case 1:
+        return `${date}st`;
+      case 2:
+        return `${date}nd`;
+      case 3:
+        return `${date}rd`; 
+    }
   }
-
-  return x;
+  return `${date}th`
 }
-    
-function combine(isMilitary) {
-  timeNow = new Date();
-  updateTime(timeNow, isMilitary);
-  updateDate(timeNow);
-}
+//#region 
+const months = [
+  "January", 
+  "February", 
+  "March", 
+  "April", 
+  "May", 
+  "June", 
+  "July", 
+  "August", 
+  "September", 
+  "October", 
+  "November", 
+  "December"];
+  
+  const days = [
+    "Sunday", 
+    "Monday", 
+    "Tuesday", 
+    "Wednesday", 
+    "Thursday", 
+    "Friday", 
+    "Saturday"];
+//#endregion
+renderTime();
+renderDate();
 
-combine(isMilitary);
-setInterval(combine, 1000, isMilitary);
+setInterval(() => {
+  renderDate();
+  renderTime();
+}, 1000);

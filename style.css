@@ -19,10 +19,10 @@ h2{
   color:aliceblue
 }
 
-h2.date {
+#date {
   color: darkorange;
 }
 
-h2.time {
+#time {
   font-style: italic;
 }
